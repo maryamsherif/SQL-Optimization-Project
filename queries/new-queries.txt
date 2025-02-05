@@ -1,0 +1,97 @@
+Query 1:
+select * from ( select sec.* from student s inner join takes t on t.student_id=s.id
+inner join section sec on t.section_id=sec.section_id 
+where sec.semester=1 and year = 2019 ) as x 
+full outer join
+( select * from section sec2 
+where sec2.semester=2 and year=2019) as y 
+ on x.section_id=y.section_id 
+___________________________________
+Query 2:
+Select distinct pnumber
+from project p
+where exists ( select pnumber from project p natural join 
+			  department d inner join employee e on e.dno=d.dnumber and p.dnumber=d.dnumber 
+			  and d.mgr_snn = ssn 
+			  where e.lname='Employee1')
+	or 
+			  pnumber in ( select pno from works_on inner join ( select ssn from employee  where lname='Employee1')
+ as f on essn=f.ssn)
+___________________________________
+Query 3:
+select lname , fname from employee where salary > ( select max ( salary) from empolyee 
+where dno=5 )
+___________________________________
+Query 4:
+select e.fname, e.lname 
+		from employee e inner join dependent d on d.essn=e.ssn 
+		where e.fname = d.dependent_name 
+		and 
+		e.sex = d.sex; 
+
+___________________________________
+Query 5:
+select fname, lname
+		from employee e
+		inner join dependent d on e.ssn=d.essn ;
+___________________________________
+Query 6:
+select dnumber, count(*)
+		from department d inner join employee e
+		on d.dnumber=e.dno
+		and
+		salary > 40000
+		and
+		dno in(
+		 select dno
+		 from employee
+		 group by dno
+		 having count (*) > 5)
+		group by dnumber;
+___________________________________
+Query 7:
+select s.sname
+from reserves r inner join sailors s
+on r.sid=s.sid where r.bid=103
+___________________________________
+Query 8:
+select s.sname
+from sailors s
+where exists (
+select 1 from reserves r where exists 
+(select 1 from boat b where b.color='red'
+and r.bid=b.bid) and s.sid=r.sid)
+___________________________________
+Query 9:
+select s.sname
+from sailors s
+inner join reserves r on s.sid=r.sid
+inner join boat b on b.bid=r.bid
+where b.color='red' and s.sid in (select s2.sid
+from sailors s2,boat b2, reserves r2
+where s2.sid=r2.sid
+and r2.bid=b2.bid
+and b2.color='green')
+___________________________________
+Query 10:
+Select * from actor where act_id in (
+select act_id from movie_cast m1 
+inner join movie m2 
+on m1.mov_id = m2.mov_id  and m2.mov_title='Annie Hall')
+___________________________________
+Query 11:
+Select dir_fname, dir_lname
+from director
+natural join movie_direction
+natural join movie_cast
+natural join movie mv
+where role is not NULL
+and mov_title='Eyes Wide Shut'
+___________________________________
+Query 12:
+select mov_title
+from movie mv
+inner join movie_direction md and md.mov_id=mv.mov_id
+inner join director d on md.dir_id=d.dir_id
+where d.dir_fname='Woddy'
+and d.dir_lname='Allen'
